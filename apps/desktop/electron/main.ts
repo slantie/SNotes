@@ -3,6 +3,10 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
+// Add these imports at the top
+import { ipcMain, dialog } from 'electron'
+import fs from 'node:fs'
+
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -66,3 +70,32 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(createWindow)
+
+// --- ADD THIS NEW BLOCK AT THE END OF THE FILE ---
+ipcMain.handle('save-file', async (event, { content, format }) => {
+  if (!win) {
+    return { success: false, error: 'Window not available' };
+  }
+
+  const defaultFileName = `note.${format}`;
+  
+  const { canceled, filePath } = await dialog.showSaveDialog(win, {
+    title: `Export Note as ${format.toUpperCase()}`,
+    defaultPath: defaultFileName,
+    filters: [{ name: format.toUpperCase(), extensions: [format] }],
+  });
+
+  if (canceled || !filePath) {
+    return { success: false, error: 'Save dialog canceled' };
+  }
+
+  try {
+    // For PDF, the content will be an ArrayBuffer, so we need to convert it to a Buffer
+    const dataToSave = format === 'pdf' ? Buffer.from(content) : content;
+    fs.writeFileSync(filePath, dataToSave);
+    return { success: true, filePath };
+  } catch (error: any) {
+    console.error('Failed to save file:', error);
+    return { success: false, error: error.message };
+  }
+});

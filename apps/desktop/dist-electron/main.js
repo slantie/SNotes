@@ -1,7 +1,8 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import fs from "node:fs";
 createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.env.APP_ROOT = path.join(__dirname, "..");
@@ -38,6 +39,28 @@ app.on("activate", () => {
   }
 });
 app.whenReady().then(createWindow);
+ipcMain.handle("save-file", async (event, { content, format }) => {
+  if (!win) {
+    return { success: false, error: "Window not available" };
+  }
+  const defaultFileName = `note.${format}`;
+  const { canceled, filePath } = await dialog.showSaveDialog(win, {
+    title: `Export Note as ${format.toUpperCase()}`,
+    defaultPath: defaultFileName,
+    filters: [{ name: format.toUpperCase(), extensions: [format] }]
+  });
+  if (canceled || !filePath) {
+    return { success: false, error: "Save dialog canceled" };
+  }
+  try {
+    const dataToSave = format === "pdf" ? Buffer.from(content) : content;
+    fs.writeFileSync(filePath, dataToSave);
+    return { success: true, filePath };
+  } catch (error) {
+    console.error("Failed to save file:", error);
+    return { success: false, error: error.message };
+  }
+});
 export {
   MAIN_DIST,
   RENDERER_DIST,
