@@ -10,6 +10,13 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.18.3",
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.0",
+      "react-dom": "19.1.0",
+      "use-sync-external-store>react": "19.1.0"
+    }
+  },
   "devDependencies": {
     "supabase": "^2.51.0"
   }
