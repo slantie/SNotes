@@ -15,7 +15,14 @@
       "react": "19.1.0",
       "react-dom": "19.1.0",
       "use-sync-external-store>react": "19.1.0"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "core-js",
+      "electron",
+      "esbuild",
+      "supabase",
+      "unrs-resolver"
+    ]
   },
   "devDependencies": {
     "supabase": "^2.51.0"

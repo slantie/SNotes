@@ -20,7 +20,28 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-        <Stack />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: colorScheme === 'dark' ? '#09090b' : '#ffffff',
+            },
+          }}
+        >
+          <Stack.Screen 
+            name="(tabs)" 
+            options={{ 
+              headerShown: false,
+            }} 
+          />
+          <Stack.Screen 
+            name="note-editor"
+            options={{
+              presentation: 'modal',
+              headerShown: false,
+            }}
+          />
+        </Stack>
         <PortalHost />
       </ThemeProvider>
     </SafeAreaProvider>

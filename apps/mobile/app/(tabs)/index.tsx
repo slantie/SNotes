@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { View, FlatList, Pressable, Text as RNText, TextInput, StyleSheet, Modal, Alert } from 'react-native';
+import { View, FlatList, Pressable, Text as RNText, TextInput, StyleSheet, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useNotesStore } from 'shared/store';
 import { useColorScheme } from 'nativewind';
-import { Trash2, X } from 'lucide-react-native';
-import { Button } from '@/components/ui/button';
-import { Text } from '@/components/ui/text';
+import { Trash2 } from 'lucide-react-native';
 
 export default function NotesListScreen() {
   const router = useRouter();
@@ -54,7 +53,7 @@ export default function NotesListScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <View style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
+    <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]} edges={['top', 'left', 'right']}>
       {/* Header */}
       <View style={[styles.header, isDark ? styles.headerDark : styles.headerLight]}>
         <RNText style={[styles.title, isDark ? styles.textDark : styles.textLight]}>
@@ -191,7 +190,7 @@ export default function NotesListScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -345,14 +344,12 @@ const styles = StyleSheet.create({
   noteFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#27272a',
   },
   noteDate: {
-    fontSize: 12,
-  },
-  noteTime: {
     fontSize: 12,
   },
 });
